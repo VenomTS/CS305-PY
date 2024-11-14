@@ -46,7 +46,7 @@ Track deposits, withdrawals, and balance checks for each account, allowing users
    - Open Visual Studio and go to **File > Clone Repository**.
    - Enter the repository URL:
      ```bash
-     https://github.com/your-username/banking-system.git
+     https://github.com/AhOk2004/CS305-PY.git
      ```
 
 2. **Open the Project in Visual Studio**
