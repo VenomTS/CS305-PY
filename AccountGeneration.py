@@ -14,6 +14,7 @@ class Account:
         self.setPIN()
         self.setDeposit()
         self._transactions=[]
+        self.creation_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Add creation date
 
     def setName(self):
         while True: 
@@ -35,6 +36,18 @@ class Account:
             if self.isAccountNumberUnique(acc_num):
                 self.AccountNumber=acc_num
                 break
+
+    def isAccountNumberUnique(self, acc_num):
+     if os.path.exists(self.account_storage):
+        with open(self.account_storage, "r") as fl:
+            try:
+                accounts = json.load(fl)
+                for account in accounts:
+                    if account["AccountNumber"] == acc_num:
+                        return False
+            except json.JSONDecodeError:
+                return True
+     return True
 
     def generateAccNumber(self):
         return ''.join([str(random.randint(0, 9)) for _ in range(16)])
@@ -70,6 +83,7 @@ class Account:
             else: 
                 print("The amount must be positive or 0!")
         self.balance=int(balance)
+        self.initial_deposit = self.balance  # Add initial deposit
     
     def addTransaction(self,transaction_type,amount):
         transaction = {
@@ -79,31 +93,6 @@ class Account:
         }
         self._transactions.append(transaction)
 
-    def getName_Surname(self): 
-        return self.Name + " " + self.Surname
-    
-    def getMobileNum(self): 
-        return self.mobile_num 
-    
-    def getPIN(self): 
-        return self.Pin
-    
-    def getAccNumber(self): 
-        return self.AccountNumber
-    
-    def getBalance(self): 
-        return self.balance
-    
-    def isAccountNumberUnique(self, acc_number):
-        if os.path.exists(self.account_storage):
-            with open(self.account_storage, "r") as fl:
-                try:
-                    accounts = json.load(fl)
-                    return all(acc["AccountNumber"] != acc_number for acc in accounts)
-                except json.JSONDecodeError:
-                    return True
-        return True
-        
     def getDict(self):
         return {
             "Name": self.Name,
@@ -112,7 +101,9 @@ class Account:
             "Balance": self.balance,
             "AccountNumber": self.AccountNumber,
             "Pin": self.Pin,
-            "Transactions": self._transactions
+            "Transactions": self._transactions,
+            "CreationDate": self.creation_date,
+            "InitialDeposit": self.initial_deposit
         }
     
     def saveToJson(self):
