@@ -1,5 +1,3 @@
-
-
 from AccountGeneration import Account
 import json
 import os
@@ -40,9 +38,15 @@ def account_menu(account_data, all_accounts):
             print("3. Deposit money")
             print("4. Withdraw money")
             print("5. Transfer money")
-            print("6. Log out")
+            print("6. Freeze account")
+            print("7. Unfreeze account")
+            print("8. Log out")
 
             choice = int(input("\nEnter a valid choice: "))
+
+            if account_data.get("is_frozen", False) and choice in [3, 4, 5]:
+                print("Your account is frozen. You cannot perform this action.")
+                continue
 
             if choice == 1:
                 print("\nAccount Details:")
@@ -50,6 +54,7 @@ def account_menu(account_data, all_accounts):
                 print(f"Phone Number: {account_data['PhoneNumber']}")
                 print(f"Balance: {account_data['Balance']} {currency}")
                 print(f"Account Number: {account_data['AccountNumber']}")
+                print(f"Account Status: {'Frozen' if account_data.get('is_frozen', False) else 'Active'}")
 
             elif choice == 2:
                 print("\nTransaction history:")
@@ -61,7 +66,7 @@ def account_menu(account_data, all_accounts):
 
             elif choice == 3:
                 try:
-                    amount = int(input("Enter the amount to deposit in BAM: "))
+                    amount = int(input("Enter the amount you want to deposit: "))
                     if amount > 0:
                         account_data["Balance"] += amount
                         account_data["Transactions"].append({
@@ -74,11 +79,11 @@ def account_menu(account_data, all_accounts):
                     else:
                         print("Deposit amount must be greater than 0.")
                 except ValueError:
-                    print("Invalid input. Please enter a numeric value.")
+                    print("Invalid input. Please enter a number.")
 
             elif choice == 4:
                 try:
-                    amount = int(input("Enter the amount to withdraw in BAM: "))
+                    amount = int(input("Enter the amount to withdraw: "))
                     if amount > 0 and amount <= account_data['Balance']:
                         account_data["Balance"] -= amount
                         account_data["Transactions"].append({
@@ -91,9 +96,9 @@ def account_menu(account_data, all_accounts):
                     elif amount > account_data['Balance']:
                         print("Insufficient funds to withdraw.")
                     else:
-                        print("The amount must be greater than zero.")
+                        print("The amount must be greater than 0.")
                 except ValueError:
-                    print("Invalid input. Please enter a numeric value.")
+                    print("Invalid input. Please enter a number.")
 
             elif choice == 5:
                 try:
@@ -106,7 +111,7 @@ def account_menu(account_data, all_accounts):
                     if recipient_acc["AccountNumber"] == account_data["AccountNumber"]:
                         raise ValueError("You cannot transfer money to your own account.")
 
-                    amount = int(input(f"Enter the amount to transfer to {recipient} in BAM: "))
+                    amount = int(input(f"Enter the amount to transfer to {recipient}: "))
 
                     if amount <= 0:
                         raise ValueError("Transfer amount must be greater than zero.")
@@ -135,7 +140,20 @@ def account_menu(account_data, all_accounts):
                 except ValueError as e:
                     print(f"Error: {e}")
 
-            elif choice == 6:
+            elif choice == 6:  
+                account_data["is_frozen"] = True
+                save_acc(all_accounts)
+                print("Your account has been frozen. You cannot perform transactions until it is unfrozen.")
+
+            elif choice == 7:  
+                if account_data.get("is_frozen", False):
+                    account_data["is_frozen"] = False
+                    save_acc(all_accounts)
+                    print("Your account has been unfrozen. You can now perform transactions.")
+                else:
+                    print("Your account is already active.")
+
+            elif choice == 8:
                 print("Logging out...")
                 hold = False
 
@@ -148,9 +166,9 @@ def main():
     toggle = True
     while toggle:
         try:
-            print("\n\nWelcome to The Bank of Ilidza\n\n")
+            print("\n\nWelcome to The Bank\n\n")
             print("1. Create an account")
-            print("2. Log in to an existing account")
+            print("2. Log in to an account")
             print("3. Exit the bank")
 
             choice = int(input("\nEnter a valid choice: "))
@@ -175,7 +193,7 @@ def main():
                     print("Invalid credentials. Please try again.")
 
             elif choice == 3:
-                print("\nThank you for using the Bank of Ilidza\n")
+                print("\nThank you for using our Bank\n")
                 toggle = False
 
             else:
@@ -185,3 +203,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

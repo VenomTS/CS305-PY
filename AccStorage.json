@@ -1,0 +1,14 @@
+[
+   {
+      "Name": "ajdn",
+      "Surname": "mujko",
+      "PhoneNumber": "0644068686",
+      "Balance": 123,
+      "AccountNumber": "0866085792162361",
+      "Pin": "123456",
+      "Transactions": [],
+      "CreationDate": "2025-01-07 14:47:53",
+      "InitialDeposit": 123,
+      "is_frozen": false
+   }
+]
